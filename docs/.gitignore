@@ -1,0 +1,7 @@
+*.DS_Store
+.vscode/
+/doc/fluid/menu.zh.json
+/doc/fluid/menu.en.json
+.idea
+build
+.vscode
