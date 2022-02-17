@@ -71,3 +71,18 @@ def test_mapper(sample):
     # 转换成BGR
     img = img[(2, 1, 0), :, :] / 255.0
     return img, int(label)
+
+
+# 测试的图片reader
+def test_reader(test_list_path, crop_size):
+    father_path = os.path.dirname(test_list_path)
+
+    def reader():
+        with open(test_list_path, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                img, label = line.split('\t')
+                img = os.path.join(father_path, img)
+                yield img, label, crop_size
+
+    return paddle.reader.xmap_readers(test_mapper, reader, cpu_count(), 1024)
