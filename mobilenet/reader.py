@@ -56,3 +56,18 @@ def train_reader(train_list_path, crop_size, resize_size):
                 yield img, label, crop_size, resize_size
 
     return paddle.reader.xmap_readers(train_mapper, reader, cpu_count(), 102400)
+
+
+# 测试图片的预处理
+def test_mapper(sample):
+    img, label, crop_size = sample
+    img = Image.open(img)
+    # 统一图像大小
+    img = img.resize((crop_size, crop_size), Image.ANTIALIAS)
+    # 转换成numpy值
+    img = np.array(img).astype(np.float32)
+    # 转换成CHW
+    img = img.transpose((2, 0, 1))
+    # 转换成BGR
+    img = img[(2, 1, 0), :, :] / 255.0
+    return img, int(label)
