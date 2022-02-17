@@ -38,4 +38,11 @@ result = exe.run(program=infer_program,
                  fetch_list=target_var)
 
 
+# 显示图片并输出结果最大的label
+lab = np.argsort(result)[0][0][-1]
+
+names = ['苹果', '哈密瓜', '胡萝卜', '樱桃', '黄瓜', '西瓜']
+
+print('预测结果标签为：%d， 名称为：%s， 概率为：%f' % (lab, names[lab], result[0][0][lab]))
+
 
