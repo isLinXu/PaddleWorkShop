@@ -4,21 +4,23 @@ import shutil
 import paddle as paddle
 # import reader
 import paddle.fluid as fluid
-from . import mobilenet_v1
-from . import reader
 
-
+# from . import mobilenet_v1
+# from . import reader
+from mobilenet import mobilenet_v1
+from mobilenet import reader
 
 crop_size = 224
 resize_size = 250
 
+paddle.enable_static()
 # 定义输入层
 image = fluid.layers.data(name='image', shape=[3, crop_size, crop_size], dtype='float32')
 label = fluid.layers.data(name='label', shape=[1], dtype='int64')
 
 
 # 获取分类器，因为这次只爬取了6个类别的图片，所以分类器的类别大小为6
-model = mobilenet_v1.net(image, 6)
+model = mobilenet_v1.net(image, 100)
 
 
 # 获取损失函数和准确率函数
@@ -35,8 +37,11 @@ optimizer = fluid.optimizer.AdamOptimizer(learning_rate=1e-3,
 opts = optimizer.minimize(avg_cost)
 
 # 获取自定义数据
-train_reader = paddle.batch(reader=reader.train_reader('images/train.list', crop_size, resize_size), batch_size=32)
-test_reader = paddle.batch(reader=reader.test_reader('images/test.list', crop_size), batch_size=32)
+
+train_path = "/home/linxu/Desktop/sport_train/train.list"
+test_path = "/home/linxu/Desktop/sport_train/test.list"
+train_reader = paddle.batch(reader=reader.train_reader(train_path, crop_size, resize_size), batch_size=32)
+test_reader = paddle.batch(reader=reader.test_reader(test_path, crop_size), batch_size=32)
 
 
 # 定义一个使用GPU的执行器
